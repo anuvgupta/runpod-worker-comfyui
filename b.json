@@ -1,0 +1,9 @@
+{
+    "package": "image-gen-worker-comfyui",
+    "targets": {
+        "run": "src/main.sh",
+        "build": "echo \"Nothing to build.\" && echo \"Running instead...\n\" && b run",
+        "clean": "echo \"Nothing to clean.\"",
+        "test": "echo \"Nothing to test.\""
+    }
+}
