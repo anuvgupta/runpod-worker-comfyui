@@ -553,8 +553,8 @@ async def process_job(
             "job_id": job_id,
             "positive_prompt": user_prompt,
             "aspect_ratio": aspect_ratio,
-            "filename_prefix": COMFYUI_FILENAME_PREFIX,
             "input_filename": input_filename,
+            "filename_prefix": COMFYUI_FILENAME_PREFIX,
         }
 
         workflow_data = workflow.load(workflow_params)

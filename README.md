@@ -338,4 +338,5 @@ In case of an error, the completion state will look like this:
 Any frontend should be able to handle all these output states.
 
 RunPod rate limits are defined here: https://docs.runpod.io/serverless/endpoints/job-operations#rate-limits
+
 Based on this, you can poll the `/status` endpoint every 1-2 seconds without hitting RunPod rate limits.
