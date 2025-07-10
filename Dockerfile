@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.9.1-devel-ubuntu22.04
+FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04
 
 WORKDIR /
 
@@ -15,32 +15,37 @@ ENV DEBIAN_FRONTEND=noninteractive \
 ARG COMFYUI_COMMIT_HASH
 ARG INSPIRE_PACK_COMMIT_HASH
 
-# Install Python, system dependencies, and CUDA
+# Install Python, system dependencies, build tools, and CUDA
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     bash \
     git \
     python3.10 \
     python3.10-venv \
+    python3.10-dev \
     python3-pip \
     libgl1 \
     libglib2.0-0 \
-    wget && \
-    rm -rf /var/lib/apt/lists/*
+    wget \
+    build-essential \
+    gcc \
+    g++ \
+    ninja-build \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create virtual environment for Python and install requirements
 RUN python3.10 -m venv /opt/venv && \
     /opt/venv/bin/pip install --upgrade pip
 
-# Copy the Python dependencies (requirements.txt) and install
-RUN /opt/venv/bin/pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-
-# # Build arguments for git commit hashes - these will invalidate cache when changed
-# ARG COMFYUI_COMMIT_HASH
-# ARG INSPIRE_PACK_COMMIT_HASH
+# # Install PyTorch with explicit compatible versions
+# # Using the most recent stable versions that work well together
+# RUN /opt/venv/bin/pip install --no-cache-dir \
+#     torch==2.4.1+cu124 \
+#     torchvision==0.19.1+cu124 \
+#     torchaudio==2.4.1+cu124 \
+#     --index-url https://download.pytorch.org/whl/cu124
 
 # Clone ComfyUI and install its dependencies
-# The ARG usage here ensures this layer is rebuilt when the commit hash changes
 RUN echo "Building ComfyUI at commit: ${COMFYUI_COMMIT_HASH}" && \
     git clone https://github.com/comfyanonymous/ComfyUI.git ${COMFYUI_ROOT} && \
     cd ${COMFYUI_ROOT} && \
@@ -51,17 +56,6 @@ RUN echo "Building Inspire Pack at commit: ${INSPIRE_PACK_COMMIT_HASH}" && \
     git clone https://github.com/ltdrdata/ComfyUI-Inspire-Pack.git ${COMFYUI_ROOT}/custom_nodes/ComfyUI-Inspire-Pack && \
     cd ${COMFYUI_ROOT}/custom_nodes/ComfyUI-Inspire-Pack && \
     /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
-
-# download models
-# SD Classic 1.5
-# RUN wget --show-progress --progress=dot:giga -O /comfyui/models/checkpoints/v1-5-pruned-emaonly.safetensors https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors
-# SDXL Lightning 4-step
-# RUN wget --show-progress --progress=dot:giga -O /comfyui/models/checkpoints/sdxl_lightning_4step.safetensors https://huggingface.co/ByteDance/SDXL-Lightning/resolve/main/sdxl_lightning_4step.safetensors
-# SDXL Lightning 8-step
-# RUN wget --show-progress --progress=dot:giga -O /comfyui/models/checkpoints/sdxl_lightning_8step.safetensors https://huggingface.co/ByteDance/SDXL-Lightning/resolve/main/sdxl_lightning_8step.safetensors
-# Juggernaut XL Lightning, Version XI
-# RUN wget --show-progress --progress=dot:giga -O /comfyui/models/checkpoints/juggernautXL_juggXILightningByRD.safetensors https://civitai.com/api/download/models/920957?type=Model&format=SafeTensor&size=full&fp=fp16
-# TODO: Add your models here if not using network volume
 
 WORKDIR /
 

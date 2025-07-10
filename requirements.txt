@@ -1,12 +1,9 @@
-# requirements
+# requirements - Compatible with ComfyUI
 
 runpod
 requests
 urllib3
 websockets
 boto3
-
-# Build xformers
-xformers --index-url https://download.pytorch.org/whl/cu124
-# # Use pre-built xformers instead of building from source
-# xformers==0.0.23.post1 --index-url https://download.pytorch.org/whl/cu124
+# Use compatible xformers version that works with PyTorch 2.4.1
+xformers==0.0.28.post1
