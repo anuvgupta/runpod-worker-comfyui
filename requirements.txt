@@ -5,4 +5,8 @@ requests
 urllib3
 websockets
 boto3
-xformers
+
+# Build xformers
+xformers --index-url https://download.pytorch.org/whl/cu124
+# # Use pre-built xformers instead of building from source
+# xformers==0.0.23.post1 --index-url https://download.pytorch.org/whl/cu124

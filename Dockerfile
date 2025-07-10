@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.3.0-runtime-ubuntu22.04
+FROM nvidia/cuda:12.9.1-devel-ubuntu22.04
 
 WORKDIR /
 
@@ -10,6 +10,10 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PATH=/usr/local/cuda/bin:/opt/venv/bin:$PATH \
     ENVIRONMENT=PRODUCTION \
     COMFYUI_ROOT=/comfyui
+
+# Build arguments for git commit hashes - these will invalidate cache when changed
+ARG COMFYUI_COMMIT_HASH
+ARG INSPIRE_PACK_COMMIT_HASH
 
 # Install Python, system dependencies, and CUDA
 RUN apt-get update && \
@@ -29,11 +33,11 @@ RUN python3.10 -m venv /opt/venv && \
     /opt/venv/bin/pip install --upgrade pip
 
 # Copy the Python dependencies (requirements.txt) and install
-RUN /opt/venv/bin/pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+RUN /opt/venv/bin/pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
-# Build arguments for git commit hashes - these will invalidate cache when changed
-ARG COMFYUI_COMMIT_HASH
-ARG INSPIRE_PACK_COMMIT_HASH
+# # Build arguments for git commit hashes - these will invalidate cache when changed
+# ARG COMFYUI_COMMIT_HASH
+# ARG INSPIRE_PACK_COMMIT_HASH
 
 # Clone ComfyUI and install its dependencies
 # The ARG usage here ensures this layer is rebuilt when the commit hash changes
