@@ -30,6 +30,19 @@ jobs:
               run: |
                   echo "VERSION=v1.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
 
+            - name: Get Git commit hashes
+              id: git_hashes
+              run: |
+                  echo "Getting latest commit hashes..."
+                  COMFYUI_COMMIT=$(git ls-remote https://github.com/comfyanonymous/ComfyUI.git HEAD | cut -f1)
+                  INSPIRE_PACK_COMMIT=$(git ls-remote https://github.com/ltdrdata/ComfyUI-Inspire-Pack.git HEAD | cut -f1)
+
+                  echo "ComfyUI commit: $COMFYUI_COMMIT"
+                  echo "Inspire Pack commit: $INSPIRE_PACK_COMMIT"
+
+                  echo "COMFYUI_COMMIT_HASH=$COMFYUI_COMMIT" >> $GITHUB_OUTPUT
+                  echo "INSPIRE_PACK_COMMIT_HASH=$INSPIRE_PACK_COMMIT" >> $GITHUB_OUTPUT
+
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v2
               with:
@@ -50,6 +63,9 @@ jobs:
                   tags: |
                       ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:latest
                       ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:${{ steps.version.outputs.VERSION }}
+                  build-args: |
+                      COMFYUI_COMMIT_HASH=${{ steps.git_hashes.outputs.COMFYUI_COMMIT_HASH }}
+                      INSPIRE_PACK_COMMIT_HASH=${{ steps.git_hashes.outputs.INSPIRE_PACK_COMMIT_HASH }}
                   cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:buildcache
                   cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:buildcache,mode=max
                   platforms: linux/amd64

@@ -1,5 +1,3 @@
-# dockerfile
-
 FROM nvidia/cuda:12.3.0-runtime-ubuntu22.04
 
 WORKDIR /
@@ -33,13 +31,20 @@ RUN python3.10 -m venv /opt/venv && \
 # Copy the Python dependencies (requirements.txt) and install
 RUN /opt/venv/bin/pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
+# Build arguments for git commit hashes - these will invalidate cache when changed
+ARG COMFYUI_COMMIT_HASH
+ARG INSPIRE_PACK_COMMIT_HASH
+
 # Clone ComfyUI and install its dependencies
-RUN git clone https://github.com/comfyanonymous/ComfyUI.git ${COMFYUI_ROOT} && \
+# The ARG usage here ensures this layer is rebuilt when the commit hash changes
+RUN echo "Building ComfyUI at commit: ${COMFYUI_COMMIT_HASH}" && \
+    git clone https://github.com/comfyanonymous/ComfyUI.git ${COMFYUI_ROOT} && \
     cd ${COMFYUI_ROOT} && \
     /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
 # Clone ComfyUI custom nodes
-RUN git clone https://github.com/ltdrdata/ComfyUI-Inspire-Pack.git ${COMFYUI_ROOT}/custom_nodes/ComfyUI-Inspire-Pack && \
+RUN echo "Building Inspire Pack at commit: ${INSPIRE_PACK_COMMIT_HASH}" && \
+    git clone https://github.com/ltdrdata/ComfyUI-Inspire-Pack.git ${COMFYUI_ROOT}/custom_nodes/ComfyUI-Inspire-Pack && \
     cd ${COMFYUI_ROOT}/custom_nodes/ComfyUI-Inspire-Pack && \
     /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 

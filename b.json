@@ -1,8 +1,8 @@
 {
     "package": "runpod-worker-comfyui",
     "targets": {
-        "run": "src/main.sh",
-        "build": "echo \"Nothing to build.\" && echo \"Running instead...\n\" && b run",
+        "start": "./src/main.sh",
+        "build": "./build.sh",
         "clean": "echo \"Nothing to clean.\"",
         "test": "echo \"Nothing to test.\""
     }
