@@ -12,14 +12,14 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             # TODO: Enable this step if not using network volume
-            # - name: Free disk space
-            #   run: |
-            #       df -h
-            #       sudo rm -rf /usr/share/dotnet
-            #       sudo rm -rf /usr/local/lib/android
-            #       sudo rm -rf /opt/ghc
-            #       sudo rm -rf /opt/hostedtoolcache
-            #       df -h
+            - name: Free disk space
+              run: |
+                  df -h
+                  sudo rm -rf /usr/share/dotnet
+                  sudo rm -rf /usr/local/lib/android
+                  sudo rm -rf /opt/ghc
+                  sudo rm -rf /opt/hostedtoolcache
+                  df -h
 
             - uses: actions/checkout@v3
               with:
