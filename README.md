@@ -172,7 +172,7 @@ First, create a network volume via RunPod website. Then:
 
 Use model downloader image:
 
-1. Clone/fork this repo https://github.com/anuvgupta/runpo-pod-downloader
+1. Clone/fork this repo https://github.com/anuvgupta/runpod-pod-downloader
 1. Modify models.txt with your models & download info. Make sure to add the model type, download link URL, model filename, and file sha256 hash
     - Please note, for the model type you add in the file, you need to stay consistent with the names for ComfyUI model type folders, or else your models will not be found. The naming is inconsistent, sometimes plural sometimes singular. Use these names: `checkpoints, controlnet, loras, vae` and for the full list see the folder names in the official repository: https://github.com/comfyanonymous/ComfyUI/tree/master/models
 1. Build the docker image & push to your docker account into a new repo
